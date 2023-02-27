@@ -2,7 +2,7 @@ import pygame as pg
 from math import*
 
 class tank:
-    def __init__(self, img: str, j: int, fenx, feny):
+    def __init__(self, img: str, j: int, fenx, feny) :
         self.propx = fenx / 1080
         self.propy = feny / 675
         print(self.propx, self.propy)
