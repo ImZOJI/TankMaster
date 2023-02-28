@@ -91,7 +91,7 @@ while partie:
 
     # Ajout de bonus à intervalle aléatoire
 
-    if time - tb >= cd * 60 and len(bonus) <= 5:
+    if time - tb >= cd and len(bonus) <= 5:
         bonus.append(Bonus(fenx))
         cd = uniform(7 * frq, 14 * frq)
         tb = time
