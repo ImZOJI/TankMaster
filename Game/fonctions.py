@@ -1,5 +1,4 @@
 from tank import *
-from bonus import *
 
 
 def maj_balle(tank, ball, screen, joueur):
