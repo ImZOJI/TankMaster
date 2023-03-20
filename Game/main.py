@@ -131,32 +131,7 @@ while partie:
 
             # On vérifie si la balle touche un bonus
 
-            i = 0
-            while i < len(bonus):
-                bon = bonus[i]
-                if bon.hitbox[0] < b.posx < bon.hitbox[2] and bon.hitbox[1] < b.posy < \
-                        bon.hitbox[3]:
-
-                    # On applique le bonus en fonction de son type
-
-                    match bon.type:
-                        case 0:
-                            adv.freeze = True
-                            adv.freezeT = time
-                        case 1:
-                            t.balle.append(balle(t.propx, t.propy))
-                        case 2:
-                            t.vit += 3
-                        case 3:
-                            for bll in t.balle:
-                                bll.mult += 0.25
-                        case 4:
-                            t.t_shield = time
-
-                    # On supprime le bonus touché
-
-                    bonus = bonus[:i] + bonus[i + 1:]
-                i += 1
+            touche_bonus(b, t, adv, bonus, time)
 
         if time - t.freezeT > 3 * 60 or t.shield:
             t.freeze = False
