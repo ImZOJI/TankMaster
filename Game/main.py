@@ -1,6 +1,5 @@
-from tank import *
-from bonus import *
 from fonctions import *
+import sys
 
 
 pg.init()
@@ -12,7 +11,7 @@ time = 0
 partie = True
 fen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
 '''fen = pg.display.set_mode((1080, 675))'''
-fenx, feny = fen.get_size()
+screen = [fenx, feny] = fen.get_size()
 
 fond = pg.transform.scale(pg.image.load("background.jpeg"), (fenx, feny)).convert()
 
@@ -113,40 +112,22 @@ while partie:
 
                 # On met à jour la position de la balle et son angle de tir si elle n'est pas tirée
 
-                b.posx = t.posx + ((60 * fenx / 1080) * ((indice + 1) % 2))
-                b.pos0 = b.posx
-                b.posy = t.posy + (20 * feny / 675)
-                b.angle = t.angle
+                maj_balle(t, b, screen, indice)
 
-                # On affiche la balle
+                # On affiche la trajectoire de tir
 
-                if not t.freeze:
-                    if t.plus:
-                        t.angle_plus()
-                    if t.moins:
-                        t.angle_moins()
-                    b.affiche(fen)
+                traj(t, b, fen)
 
             # Dans le cas où la balle est tirée
 
             else:
-
                 # On met à jour sa position en fonction de la trajectoire de tir
 
-                b.shoot(time)
-                b.hitbox = (b.posx, b.posy, b.size, b.size)
-
-                # On affiche la balle
-
-                fen.blit(b.image, (b.posx, b.posy))
+                tir_balle(b, time, fen)
 
             # On vérifie si la balle touche l'adversaire s'il n'est pas invincible
 
-            if adv.hitbox[0] < b.posx < adv.hitbox[0] + adv.hitbox[2] and adv.hitbox[1] < b.posy < \
-                    adv.hitbox[1] + adv.hitbox[3]:
-                b.tir = False
-                if  not adv.shield:
-                    adv.vie -= 1
+            touche_ennemi(b, adv)
 
             # On vérifie si la balle touche un bonus
 

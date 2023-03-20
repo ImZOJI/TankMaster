@@ -4,7 +4,6 @@ class tank:
     def __init__(self, img: str, j: int, fenx, feny):
         self.propx = fenx / 1080
         self.propy = feny / 675
-        print(self.propx, self.propy)
         self.j = j
         self.posx = (10+996*(j-1)) * self.propx
         self.posy = 500 * self.propy
