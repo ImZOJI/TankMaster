@@ -16,12 +16,12 @@ screen = [fenx, feny] = fen.get_size()
 fond = pg.transform.scale(pg.image.load("background.jpeg"), (fenx, feny)).convert()
 
 tank1 = tank("tank1.png", 1, fenx, feny)
-tank2 = tank("tank2.png", 2, fenx, feny)
+tank2: tank = tank("tank2.png", 2, fenx, feny)
 joueurs = [tank1, tank2]
 joueurs[1].angle = 136
 
 bonus = []
-cd = 0 # temps avant l'apparition du prochain
+cd = 0  # temps avant l'apparition du prochain bonus
 tb = 0  # temps à l'apparition du dernier bonus
 
 font = pg.font.SysFont('arial', 24)
@@ -136,23 +136,13 @@ while partie:
         if time - t.freezeT > 3 * 60 or t.shield:
             t.freeze = False
 
-        if not t.freeze:
-            if not tir:
-                if t.g :
-                    t.gauche()
-                if t.d :
-                    t.droite()
-                t.hitbox = (t.posx, t.posy, t.size, t.size)
-            if not t.shield:
-                fen.blit(t.image, [t.posx, t.posy])
-            else:
-                fen.blit(t.shield_img, [t.posx, t.posy])
-        else:
-            fen.blit(t.freeze_img, [t.posx, t.posy])
+        move(t, fen, tir)
 
         t.affiche_vie(fen)
 
+    # Affiche les bonus disponibles.
     for bon in bonus:
         fen.blit(bon.image, [bon.x, bon.y])
+
     pg.display.update()
     time += 1
