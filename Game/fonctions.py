@@ -63,10 +63,10 @@ def touche_ennemi(ball, adversaire):
             adversaire.vie -= 1
 
 
-def touche_bonus(ball, tank, adversaire, bonus, time):
+def touche_bonus(ball, tank, adversaire, game):
     i = 0
-    while i < len(bonus):
-        bon = bonus[i]
+    while i < len(game.bonus):
+        bon = game.bonus[i]
         if bon.hitbox[0] < ball.posx < bon.hitbox[2] and bon.hitbox[1] < ball.posy < \
                 bon.hitbox[3]:
 
@@ -75,7 +75,7 @@ def touche_bonus(ball, tank, adversaire, bonus, time):
             match bon.type:
                 case 0:
                     adversaire.freeze = True
-                    adversaire.freezeT = time
+                    adversaire.freezeT = game.time
                 case 1:
                     tank.balle.append(balle(tank.propx, tank.propy))
                 case 2:
@@ -84,11 +84,11 @@ def touche_bonus(ball, tank, adversaire, bonus, time):
                     for bll in tank.balle:
                         bll.mult += 0.25
                 case 4:
-                    tank.t_shield = time
+                    tank.t_shield = game.time
 
             # On supprime le bonus touché
 
-            bonus = bonus[:i] + bonus[i + 1:]
+            bonus = game.bonus[:i] + game.bonus[i + 1:]
         i += 1
 
 
@@ -106,3 +106,74 @@ def move(tank, fen, tir):
             fen.blit(tank.shield_img, [tank.posx, tank.posy])
     else :
         fen.blit(tank.freeze_img, [tank.posx, tank.posy])
+
+
+def keydown(event, joueurs, sys, time,):
+    partie = True
+    if event.type == pg.QUIT:
+        patrie = False
+        sys.exit()
+    if event.type == pg.KEYDOWN:
+        if event.key == pg.K_ESCAPE:
+            partie = False
+            sys.exit()
+        if event.key == pg.K_q:
+            joueurs[0].g = True
+        if event.key == pg.K_d:
+            joueurs[0].d = True
+        if event.key == pg.K_z:
+            joueurs[0].plus = True
+        if event.key == pg.K_s:
+            joueurs[0].moins = True
+        if event.key == pg.K_RIGHT:
+            joueurs[1].d = True
+        if event.key == pg.K_LEFT:
+            joueurs[1].g = True
+        if event.key == pg.K_UP:
+            joueurs[1].plus = True
+        if event.key == pg.K_DOWN:
+            joueurs[1].moins = True
+        if event.key == pg.K_SPACE:
+            if not joueurs[0].freeze:
+                for b in joueurs[0].balle:
+                    if not b.tir:
+                        b.t0 = time
+                        b.tir = True
+                        break
+        if event.key == pg.K_RETURN:
+            if not joueurs[1].freeze:
+                for b in joueurs[1].balle:
+                    if not b.tir:
+                        b.t0 = time
+                        b.pos0 = joueurs[1].posx
+                        b.tir = True
+                        break
+    return partie
+
+
+def keyup(event, joueurs):
+    if event.type == pg.KEYUP:
+        if event.key == pg.K_q:
+            joueurs[0].g = False
+        if event.key == pg.K_d:
+            joueurs[0].d = False
+        if event.key == pg.K_z:
+            joueurs[0].plus = False
+        if event.key == pg.K_s:
+            joueurs[0].moins = False
+        if event.key == pg.K_RIGHT:
+            joueurs[1].d = False
+        if event.key == pg.K_LEFT:
+            joueurs[1].g = False
+        if event.key == pg.K_UP:
+            joueurs[1].plus = False
+        if event.key == pg.K_DOWN:
+            joueurs[1].moins = False
+
+
+def getevents(joueurs, sys, time):
+    partie = True
+    for event in pg.event.get():
+        partie = keydown(event, joueurs, sys, time)
+        keyup(event, joueurs)
+    return partie
