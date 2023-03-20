@@ -64,7 +64,7 @@ def touche_ennemi(ball, adversaire):
             adversaire.vie -= 1
 
 
-def touche_bonus(ball, tank, adversaire, bonus, time):
+def touche_bonus(ball: object, tank: object, adversaire: object, bonus: object, time: object) -> object:
     i = 0
     while i < len(bonus):
         bon = bonus[i]
@@ -91,3 +91,19 @@ def touche_bonus(ball, tank, adversaire, bonus, time):
 
             bonus = bonus[:i] + bonus[i + 1:]
         i += 1
+
+
+def move(tank: object, fen: object, tir: object) -> object:
+    if not tank.freeze:
+        if not tir:
+            if tank.g:
+                tank.gauche()
+            if tank.d:
+                tank.droite()
+            tank.hitbox = (tank.posx, tank.posy, tank.size, tank.size)
+        if not tank.shield:
+            fen.blit(tank.image, [tank.posx, tank.posy])
+        else :
+            fen.blit(tank.shield_img, [tank.posx, tank.posy])
+    else :
+        fen.blit(tank.freeze_img, [tank.posx, tank.posy])
