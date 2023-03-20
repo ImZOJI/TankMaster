@@ -3,7 +3,7 @@ from tank import *
 
 def maj_balle(tank, ball, screen, joueur):
     """
-    :param tank: tank
+    :param tank: Tank
     :param ball: balle
     :param screen: tab
     :param joueur: int
@@ -18,7 +18,7 @@ def maj_balle(tank, ball, screen, joueur):
 
 def traj(tank, ball, fen):
     """
-    :param tank: tank
+    :param tank: Tank
     :param ball: balle
     :param fen: pg.display
     :return:
@@ -34,7 +34,7 @@ def traj(tank, ball, fen):
 
 def tir_balle(ball, time, fen):
     """
-    :param ball: balle
+    :param ball: Balle
     :param time: int
     :param fen: pg.display
     :return:
@@ -51,7 +51,7 @@ def tir_balle(ball, time, fen):
 
 def touche_ennemi(ball, adversaire):
     """
-    :param ball: balle
+    :param ball: Balle
     :param adversaire: tank
     :return:
     Fonction quio permet de retirer de la vie si l'adversaire est touché.
@@ -63,7 +63,7 @@ def touche_ennemi(ball, adversaire):
             adversaire.vie -= 1
 
 
-def touche_bonus(ball: object, tank: object, adversaire: object, bonus: object, time: object) -> object:
+def touche_bonus(ball, tank, adversaire, bonus, time):
     i = 0
     while i < len(bonus):
         bon = bonus[i]
@@ -92,7 +92,7 @@ def touche_bonus(ball: object, tank: object, adversaire: object, bonus: object, 
         i += 1
 
 
-def move(tank: object, fen: object, tir: object) -> object:
+def move(tank, fen, tir):
     if not tank.freeze:
         if not tir:
             if tank.g:
