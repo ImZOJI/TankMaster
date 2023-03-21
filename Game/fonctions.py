@@ -63,10 +63,10 @@ def touche_ennemi(ball, adversaire):
             adversaire.vie -= 1
 
 
-def touche_bonus(ball, tank, adversaire, game):
+def touche_bonus(ball, tank, adversaire, g):
     i = 0
-    while i < len(game.bonus):
-        bon = game.bonus[i]
+    while i < len(g.bonus):
+        bon = g.bonus[i]
         if bon.hitbox[0] < ball.posx < bon.hitbox[2] and bon.hitbox[1] < ball.posy < \
                 bon.hitbox[3]:
 
@@ -75,7 +75,7 @@ def touche_bonus(ball, tank, adversaire, game):
             match bon.type:
                 case 0:
                     adversaire.freeze = True
-                    adversaire.freezeT = game.time
+                    adversaire.freezeT = g.time
                 case 1:
                     tank.balle.append(balle(tank.propx, tank.propy))
                 case 2:
@@ -84,11 +84,11 @@ def touche_bonus(ball, tank, adversaire, game):
                     for bll in tank.balle:
                         bll.mult += 0.25
                 case 4:
-                    tank.t_shield = game.time
+                    tank.t_shield = g.time
 
             # On supprime le bonus touché
 
-            bonus = game.bonus[:i] + game.bonus[i + 1:]
+            g.bonus = g.bonus[:i] + g.bonus[i + 1 :]
         i += 1
 
 
