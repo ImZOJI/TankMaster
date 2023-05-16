@@ -6,12 +6,16 @@ import sys
 
 pg.init()
 
+pg.mixer.music.load("music.mp3")
+pg.mixer.music.play(-1)
+
 game = game()
 
 tank1 = tank("tank1.png", 1, game.fenx, game.feny)
 tank2: tank = tank("tank2.png", 2, game.fenx, game.feny)
 joueurs = [tank1, tank2]
 joueurs[1].angle = 136
+
 while game.partie:
 
     game.clock.tick(game.frq)

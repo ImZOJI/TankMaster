@@ -59,6 +59,7 @@ def touche_ennemi(ball, adversaire):
     if adversaire.hitbox[0] < ball.posx < adversaire.hitbox[0] + adversaire.hitbox[2] and adversaire.hitbox[1] <\
             ball.posy < adversaire.hitbox[1] + adversaire.hitbox[3]:
         ball.tir = False
+        pg.mixer.Sound("exploion.mp3").play()
         if not adversaire.shield:
             adversaire.vie -= 1
 
@@ -138,6 +139,9 @@ def keydown(event, joueurs, sys, time,):
                 for b in joueurs[0].balle:
                     if not b.tir:
                         b.t0 = time
+                        shotS = pg.mixer.Sound("shot.mp3")
+                        shotS.set_volume(0.3)
+                        shotS.play()
                         b.tir = True
                         break
         if event.key == pg.K_RETURN:
@@ -145,7 +149,9 @@ def keydown(event, joueurs, sys, time,):
                 for b in joueurs[1].balle:
                     if not b.tir:
                         b.t0 = time
-                        b.pos0 = joueurs[1].posx
+                        shotS = pg.mixer.Sound("shot.mp3")
+                        shotS.set_volume(0.3)
+                        shotS.play()
                         b.tir = True
                         break
     return partie
@@ -177,3 +183,8 @@ def getevents(joueurs, sys, time):
         partie = keydown(event, joueurs, sys, time)
         keyup(event, joueurs)
     return partie
+
+
+def explosion(fen):
+    spritesheet = pg.image.load("explosion.png").convert_alpha()
+    img = spritesheet.subsurface((0, 0, 384, 384))
