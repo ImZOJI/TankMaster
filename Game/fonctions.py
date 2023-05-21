@@ -111,7 +111,7 @@ def move(tank, fen, tir):
 def keydown(event, joueurs, sys, time,):
     partie = True
     if event.type == pg.QUIT:
-        patrie = False
+        partie = False
         sys.exit()
     if event.type == pg.KEYDOWN:
         if event.key == pg.K_ESCAPE:

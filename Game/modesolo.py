@@ -1,5 +1,6 @@
 import pygame as pg
-class game:
+
+class modesolo:
     def __init__(self):
         self.frq = 60
         self.clock = pg.time.Clock()
