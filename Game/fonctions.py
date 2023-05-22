@@ -342,22 +342,47 @@ def partieSolo(fen):
 
 def menuFin(fen):
     screen = [fenx, feny] = fen.get_size()
-    menuFin = True
-    while menuFin:
-        x = 0
-        # ecran game over qui s'affiche et bouton continue tq si on appuie menuFin = False
+    fini = True
+    couleur = (255, 255, 255)
+    fond = pg.transform.scale(pg.image.load("gameover.jpg"), (fenx, feny)).convert()
+    couleur_sombre = (36, 63, 93)
+    couleur_claire = (61, 72, 77)
+    mouse = pg.mouse.get_pos()
+    smallfont = pg.font.SysFont('Cooper', 35)
+    jouer = smallfont.render('CONTINUE', True, couleur)
+    while fini:
+        fen.blit(fond, (0,0))
+        if (fenx / 2.2 <= mouse[0] <= fenx / 2.2 + 140) and (feny / 1.2 <= mouse[1] <= feny / 1.2 + 40):
+            pg.draw.rect(fen, couleur_sombre, [fenx / 2.2, feny / 1.2, 140, 40])
+        else:
+            pg.draw.rect(fen, couleur_claire, [fenx / 2.2, feny / 1.2, 140, 40])
+        fen.blit(jouer, (fenx / 2.2 + 5, feny / 1.2 + 10))
+        pg.display.update()
+        for ev in pg.event.get():
+
+            if ev.type == pg.QUIT:
+                sys.exit()
+
+            if ev.type == pg.KEYDOWN:
+                if ev.key == pg.K_ESCAPE:
+                    sys.exit()
+
+            if ev.type == pg.MOUSEBUTTONDOWN:
+                if (fenx / 2.2 <= mouse[0] <= fenx / 2.2 + 140) and (feny / 1.2 <= mouse[1] <= feny / 1.2 + 40):
+                    mainMenu(fen)
     mainMenu(fen)
 
 
 def partieMulti(fen):
     screen = [fenx, feny] = fen.get_size()
     game = multi.game(screen)
+    game.partie = True
     tank1 = char.tank("tank1.png", 1, game.fenx, game.feny)
     tank2 = char.tank("tank2.png", 2, game.fenx, game.feny)
     joueurs = [tank1, tank2]
     joueurs[1].angle = 136
 
-    while game.partie:
+    while game.partie :
 
         game.clock.tick(game.frq)
         fen.blit(game.fond, (0, 0))
@@ -371,7 +396,7 @@ def partieMulti(fen):
             game.cooldown = uniform(7 * game.frq, 14 * game.frq)
             game.lastBonusTime = game.time
 
-        for indice in range(2):
+        for indice in range(2) :
             tank = joueurs[indice]
             indiceAdversaire = (indice + 1) % 2
             adv = joueurs[indiceAdversaire]
@@ -405,7 +430,7 @@ def partieMulti(fen):
 
                 touche_bonus(ball, tank, adv, game)
 
-            if game.time - tank.freezeT > 3 * 60 or tank.shield:
+            if game.time - tank.freezeT > 3 * 60 or tank.shield :
                 tank.freeze = False
 
             if not tir :
@@ -421,9 +446,10 @@ def partieMulti(fen):
             for bon in game.bonus :
                 fen.blit(bon.image, [bon.x, bon.y])
 
-            if joueurs[0].vie == 0 or joueurs[1].vie == 0:
+            if joueurs[0].vie == 0 or joueurs[1].vie == 0 :
                 game.partie = False
 
             pg.display.update()
             game.time += 1
     mainMenu(fen)
+
