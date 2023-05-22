@@ -199,10 +199,10 @@ def explosion(fen):
 def mainMenu(fen):
     screen = [fenx, feny] = fen.get_size()
     menu = men.menu(screen)
+    fond = pg.transform.scale(pg.image.load("fond_menu.png"), (menu.fenx, menu.feny)).convert()
 
     while menu.partie:
 
-        fond = pg.transform.scale(pg.image.load("fond_menu.png"), (menu.fenx, menu.feny)).convert()
         fen.blit(fond, [0, 0])
 
         # coordonnes de la souris dans un tuple
