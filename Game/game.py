@@ -4,7 +4,7 @@ class game:
         self.frq = 60
         self.clock = pg.time.Clock()
         self.time = 0
-        self.partie = False
+        self.partie = True
         self.screen = [self.fenx, self.feny] = screen
         self.fond = pg.transform.scale(pg.image.load("background.jpeg"), (self.fenx, self.feny)).convert()
         self.bonus = []

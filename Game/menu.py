@@ -7,5 +7,5 @@ class menu:
         self.time = 0
         self.partie = True
         self.screen = [self.fenx, self.feny] = screen
-        self.fond = pg.transform.scale(pg.image.load("background.png"), (self.fenx, self.feny)).convert()
+        self.fond = pg.transform.scale(pg.image.load("fond_menu.png"), (self.fenx, self.feny)).convert()
 
