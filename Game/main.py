@@ -105,6 +105,7 @@ while jeu:
 
     while game.partie:
 
+
         game.clock.tick(game.frq)
         game.fen.blit(game.fond, (0, 0))
 
@@ -245,6 +246,18 @@ while jeu:
         modesolo.time += 1
 
     while fin.partie:
+
+        joueurs[0].vie = 5
+        joueurs[0].propx = game.fenx / 1080
+        joueurs[0].posx = (10+996*(1-1)) * joueurs[0].propx
+        joueurs[1].vie = 5
+        joueurs[1].propx = game.fenx / 1080
+        joueurs[1].posx = (10 + 996 * (2 - 1)) * joueurs[1].propx
+        game.time = 0
+        game.bonus = []
+        game.cd = 0  # temps avant l'apparition du prochain bonus
+        game.tb = 0  # temps à l'apparition du dernier bonus
+
         res = (fin.fenx, fin.feny)
 
         screen = pg.display.set_mode(res)
