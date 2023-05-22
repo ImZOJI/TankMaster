@@ -347,11 +347,12 @@ def menuFin(fen):
     fond = pg.transform.scale(pg.image.load("gameover.jpg"), (fenx, feny)).convert()
     couleur_sombre = (36, 63, 93)
     couleur_claire = (61, 72, 77)
-    mouse = pg.mouse.get_pos()
     smallfont = pg.font.SysFont('Cooper', 35)
     jouer = smallfont.render('CONTINUE', True, couleur)
+
     while fini:
         fen.blit(fond, (0,0))
+        mouse = pg.mouse.get_pos()
         if (fenx / 2.2 <= mouse[0] <= fenx / 2.2 + 140) and (feny / 1.2 <= mouse[1] <= feny / 1.2 + 40):
             pg.draw.rect(fen, couleur_sombre, [fenx / 2.2, feny / 1.2, 140, 40])
         else:
@@ -370,7 +371,6 @@ def menuFin(fen):
             if ev.type == pg.MOUSEBUTTONDOWN:
                 if (fenx / 2.2 <= mouse[0] <= fenx / 2.2 + 140) and (feny / 1.2 <= mouse[1] <= feny / 1.2 + 40):
                     mainMenu(fen)
-    mainMenu(fen)
 
 
 def partieMulti(fen):
@@ -451,5 +451,5 @@ def partieMulti(fen):
 
             pg.display.update()
             game.time += 1
-    mainMenu(fen)
+    menuFin(fen)
 
