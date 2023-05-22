@@ -1,4 +1,10 @@
 from tank import *
+from bonus import*
+from game import*
+from modesolo import*
+from menu import*
+from fin import*
+import sys
 
 
 def maj_balle(tank, ball, screen, joueur):
@@ -188,3 +194,78 @@ def getevents(joueurs, sys, time):
 def explosion(fen):
     spritesheet = pg.image.load("explosion.png").convert_alpha()
     img = spritesheet.subsurface((0, 0, 384, 384))
+
+
+def menu(fen):
+    menu = menu(screen)
+
+    while menu.partie:
+
+        couleur = (255, 255, 255)
+
+        couleur_sombre = (36, 63, 93)
+        couleur_claire = (61, 72, 77)
+
+        smallfont = pg.font.SysFont('Cooper', 35)
+        fond = pg.transform.scale(pg.image.load("fond_menu.png"), (menu.fenx, menu.feny)).convert()
+        quit = smallfont.render('QUITTER', True, couleur)
+        jouer = smallfont.render('MULTI 2J', True, couleur)
+        solo = smallfont.render('SOLO', True, couleur)
+
+        fen.blit(fond, [0, 0])
+        for ev in pg.event.get():
+
+            if ev.type == pg.QUIT:
+                sys.exit()
+
+            if ev.type == pg.MOUSEBUTTONDOWN:
+
+                if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
+                        menu.feny / 1.5 <= mouse[1] <= menu.feny / 1.5 + 40):
+                    sys.exit()
+
+            if ev.type == pg.MOUSEBUTTONDOWN:
+                if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
+                        menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
+                    game.partie = True
+                    menu.partie = False
+
+            if ev.type == pg.MOUSEBUTTONDOWN:
+                if (menu.fenx / 2.2 + 150 <= mouse[0] <= menu.fenx / 2.2 + 290) and (
+                        menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
+                    modesolo.partie = True
+                    menu.partie = False
+
+        # coordonnes de la souris dans un tuple
+        mouse = pg.mouse.get_pos()
+
+        # quand la souris passe sur le bouton la couleur change
+        if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
+            pg.draw.rect(fen, couleur_sombre, [menu.fenx / 2.2, menu.feny / 3, 140, 40])
+
+        else:
+            pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2, menu.feny / 3, 140, 40])
+        fen.blit(jouer, (menu.fenx / 2.2 + 18, menu.feny / 3 + 10))
+
+        if (menu.fenx / 2.2 + 150 <= mouse[0] <= menu.fenx / 2.2 + 290) and (menu.feny / 3 <= mouse[1] <= menu.feny /
+                                                                             3 + 40):
+            pg.draw.rect(fen, couleur_sombre, [menu.fenx / 2.2 + 150, menu.feny / 3, 140, 40])
+
+        else:
+            pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2 + 150, menu.feny / 3, 140, 40])
+        fen.blit(solo, (menu.fenx / 2.2 + 178, menu.feny / 3 + 10))
+
+        if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (menu.feny / 1.5 <= mouse[1] <= menu.feny /
+                                                                       1.5 + 40):
+            pg.draw.rect(fen, couleur_sombre, [menu.fenx / 2.2, menu.feny / 1.5, 140, 40])
+
+
+
+        else:
+            pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2, menu.feny / 1.5, 140, 40])
+
+            # superimposing the text onto our button
+        fen.blit(quit, (menu.fenx / 2.2 + 14, menu.feny / 1.5 + 10))
+
+        # updates the frames of the game
+        pg.display.update()
