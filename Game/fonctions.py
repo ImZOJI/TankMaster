@@ -1,6 +1,6 @@
-from tank import *
+import tank as char
 from bonus import*
-from game import*
+import game as multi
 from modesolo import*
 import menu as men # obligé de l'importé comme ça il y avait un problème quand je l'importais comme les autres
 from fin import*
@@ -84,7 +84,7 @@ def touche_bonus(ball, tank, adversaire, partie):
                     adversaire.freeze = True
                     adversaire.freezeT = partie.time
                 case 1:
-                    tank.balle.append(balle(tank.propx, tank.propy))
+                    tank.balle.append(char.balle(tank.propx, tank.propy))
                 case 2:
                     tank.vit += 3
                 case 3:
@@ -95,7 +95,7 @@ def touche_bonus(ball, tank, adversaire, partie):
 
             # On supprime le bonus touché
 
-            partie.bonus = partie.bonus[:i] + partie.bonus[i + 1 :]
+            partie.bonus = partie.bonus[:i] + partie.bonus[i + 1:]
         i += 1
 
 
@@ -196,18 +196,18 @@ def explosion(fen):
     img = spritesheet.subsurface((0, 0, 384, 384))
 
 
-def mainMenu(fen, screen):
+def mainMenu(fen):
+    screen = [fenx, feny] = fen.get_size()
     menu = men.menu(screen)
 
     while menu.partie:
-
 
         fond = pg.transform.scale(pg.image.load("fond_menu.png"), (menu.fenx, menu.feny)).convert()
         fen.blit(fond, [0, 0])
 
         # coordonnes de la souris dans un tuple
         mouse = pg.mouse.get_pos()
-        eventMenu(menu, mouse)
+        eventMenu(menu, mouse, fen)
 
         dessineBoutons(menu, fen, mouse)
 
@@ -215,7 +215,7 @@ def mainMenu(fen, screen):
         pg.display.update()
 
 
-def eventMenu(menu, mouse):
+def eventMenu(menu, mouse, fen):
     for ev in pg.event.get():
 
         if ev.type == pg.QUIT:
@@ -228,12 +228,10 @@ def eventMenu(menu, mouse):
                 sys.exit()
             if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
                     menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
-                game.partie = True
-                menu.partie = False
+                partieMulti(fen)
             if (menu.fenx / 2.2 + 150 <= mouse[0] <= menu.fenx / 2.2 + 290) and (
                     menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
-                modesolo.partie = True
-                menu.partie = False
+                partieSolo(fen)
 
 
 def dessineBoutons(menu, fen, mouse):
@@ -270,7 +268,7 @@ def dessineBoutons(menu, fen, mouse):
 
 
 def partieSolo(fen):
-    tankSolo = tank("tank1.png", 1, modesolo.fenx, modesolo.feny)
+    tankSolo = char.tank("tank1.png", 1, modesolo.fenx, modesolo.feny)
     joueurSolo = [tankSolo]
     joueurSolo[0].angle = 136
 
@@ -339,3 +337,90 @@ def partieSolo(fen):
 
         pg.display.update()
         modesolo.time += 1
+
+    menuFin(fen)
+
+def menuFin(fen):
+    screen = [fenx, feny] = fen.get_size()
+    mainMenu(fen)
+
+
+def partieMulti(fen):
+    screen = [fenx, feny] = fen.get_size()
+    game = multi.game(screen)
+    game.partie = True
+    tank1 = char.tank("tank1.png", 1, game.fenx, game.feny)
+    tank2 = char.tank("tank2.png", 2, game.fenx, game.feny)
+    joueurs = [tank1, tank2]
+    joueurs[1].angle = 136
+
+    while game.partie :
+
+        game.clock.tick(game.frq)
+        fen.blit(game.fond, (0, 0))
+
+        game.partie = getevents(joueurs, sys, game.time)
+
+        # Ajout de bonus à intervalle aléatoire
+
+        if game.time - game.lastBonusTime >= game.couldown and len(game.bonus) <= 5:
+            game.bonus.append(Bonus(game.fenx))
+            game.cooldown = uniform(7 * game.frq, 14 * game.frq)
+            game.lastBonusTime = game.time
+
+        for indice in range(2) :
+            tank = joueurs[indice]
+            indiceAdversaire = (indice + 1) % 2
+            adv = joueurs[indiceAdversaire]
+            tir = True
+
+            tank.shield = game.time - tank.t_shield <= 5 * game.frq
+
+            for ball in tank.balle:
+                if not ball.tir:
+
+                    # On dit qu'au moins une balle n'est pas tirée
+
+                    tir = False
+
+                    # On met à jour la position de la balle et son angle de tir si elle n'est pas tirée
+
+                    maj_balle(tank, ball, game.screen, indice)
+
+                # Dans le cas où la balle est tirée
+
+                else :
+                    # On met à jour sa position en fonction de la trajectoire de tir
+
+                    tir_balle(ball, game.time, fen)
+
+                # On vérifie si la balle touche l'adversaire s'il n'est pas invincible
+
+                touche_ennemi(ball, adv)
+
+                # On vérifie si la balle touche un bonus
+
+                touche_bonus(ball, tank, adv, game)
+
+            if game.time - tank.freezeT > 3 * 60 or tank.shield :
+                tank.freeze = False
+
+            if not tir :
+                # On affiche la trajectoire de tir
+
+                dessineTrajectoire(tank, tank.balle[-1], fen)
+
+            deplace(tank, fen, tir)
+
+            tank.affiche_vie(fen)
+
+            # Affiche les bonus disponibles.
+            for bon in game.bonus :
+                fen.blit(bon.image, [bon.x, bon.y])
+
+            if joueurs[0].vie == 0 or joueurs[1].vie == 0 :
+                game.partie = False
+
+            pg.display.update()
+            game.time += 1
+    mainMenu(fen)
