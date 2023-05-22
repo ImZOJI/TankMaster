@@ -233,9 +233,9 @@ while jeu:
             if not tir:
                 # On affiche la trajectoire de tir
 
-                traj(t, t.balle[-1], modesolo.fen)
+                dessineTrajectoire(t, t.balle[-1], modesolo.fen)
 
-            move(t, modesolo.fen, tir)
+            deplace(t, modesolo.fen, tir)
 
             t.affiche_vie(modesolo.fen)
 
