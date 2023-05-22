@@ -9,13 +9,16 @@ import sys
 
 pg.init()
 
+pg.mixer.music.load("music.mp3")
+pg.mixer.music.play(-1)
+
 game = game()
 modesolo = modesolo()
 menu = menu()
 fin = fin()
 
 tank1 = tank("tank1.png", 1, game.fenx, game.feny)
-tank2: tank = tank("tank2.png", 2, game.fenx, game.feny)
+tank2 = tank("tank2.png", 2, game.fenx, game.feny)
 joueurs = [tank1, tank2]
 joueurs[1].angle = 136
 
@@ -106,64 +109,66 @@ while jeu:
     while game.partie:
 
 
+
         game.clock.tick(game.frq)
         game.fen.blit(game.fond, (0, 0))
 
         game.partie = getevents(joueurs, sys, game.time)
 
-        # Ajout de bonus à intervalle aléatoire
+    # Ajout de bonus à intervalle aléatoire
 
-        if game.time - game.tb >= game.cd and len(game.bonus) <= 5:
-            game.bonus.append(Bonus(game.fenx))
-            cd = uniform(7 * game.frq, 14 * game.frq)
-            tb = game.time
-
-        for indice in range(2):
-            t = joueurs[indice]
-            indiceOp = (indice + 1) % 2
-            adv = joueurs[indiceOp]
-            tir = True
-
-            t.shield = game.time - t.t_shield <= 5 * game.frq
+    if game.time - game.lastBonusTime >= game.couldown and len(game.bonus) <= 5:
+        game.bonus.append(Bonus(game.fenx))
+        cooldown = uniform(7 * game.frq, 14 * game.frq)
+        lastBonusTime = game.time
 
 
-            for b in t.balle:
-                if not b.tir:
+    for indice in range(2):
+        tank = joueurs[indice]
+        indiceAdversaire = (indice + 1) % 2
+        adv = joueurs[indiceAdversaire]
+        tir = True
 
-                    # On dit qu'au moins une balle n'est pas tirée
+        tank.shield = game.time - tank.t_shield <= 5 * game.frq
 
-                    tir = False
 
-                    # On met à jour la position de la balle et son angle de tir si elle n'est pas tirée
+        for ball in tank.balle:
+            if not ball.tir:
 
-                    maj_balle(t, b, game.screen, indice)
+                # On dit qu'au moins une balle n'est pas tirée
 
-                # Dans le cas où la balle est tirée
+                tir = False
 
-                else:
-                    # On met à jour sa position en fonction de la trajectoire de tir
+                # On met à jour la position de la balle et son angle de tir si elle n'est pas tirée
 
-                    tir_balle(b, game.time, game.fen)
+                maj_balle(tank, ball, game.screen, indice)
 
-                # On vérifie si la balle touche l'adversaire s'il n'est pas invincible
+            # Dans le cas où la balle est tirée
 
-                touche_ennemi(b, adv)
+            else:
+                # On met à jour sa position en fonction de la trajectoire de tir
 
-                # On vérifie si la balle touche un bonus
+                tir_balle(ball, game.time, game.fen)
 
-                touche_bonus(b, t, adv, game)
+            # On vérifie si la balle touche l'adversaire s'il n'est pas invincible
 
-            if game.time - t.freezeT > 3 * 60 or t.shield:
-                t.freeze = False
+            touche_ennemi(ball, adv)
 
-            if not tir:
-                # On affiche la trajectoire de tir
+            # On vérifie si la balle touche un bonus
 
-                traj(t, t.balle[-1], game.fen)
+            touche_bonus(ball, tank, adv, game)
 
-            move(t, game.fen, tir)
+        if game.time - tank.freezeT > 3 * 60 or tank.shield:
+            tank.freeze = False
 
-            t.affiche_vie(game.fen)
+        if not tir:
+            # On affiche la trajectoire de tir
+
+            dessineTrajectoire(tank, tank.balle[-1], game.fen)
+
+        deplace(tank, game.fen, tir)
+
+        tank.affiche_vie(game.fen)
 
         # Affiche les bonus disponibles.
         for bon in game.bonus:
