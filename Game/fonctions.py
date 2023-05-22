@@ -2,7 +2,7 @@ from tank import *
 from bonus import*
 from game import*
 from modesolo import*
-from menu import*
+import menu as men # obligé de l'importé comme ça il y avait un problème quand je l'importais comme les autres
 from fin import*
 import sys
 
@@ -196,11 +196,47 @@ def explosion(fen):
     img = spritesheet.subsurface((0, 0, 384, 384))
 
 
-def menu(fen):
-    menu = menu(screen)
+def mainMenu(fen, screen):
+    menu = men.menu(screen)
 
     while menu.partie:
 
+
+        fond = pg.transform.scale(pg.image.load("fond_menu.png"), (menu.fenx, menu.feny)).convert()
+        fen.blit(fond, [0, 0])
+
+        # coordonnes de la souris dans un tuple
+        mouse = pg.mouse.get_pos()
+        eventMenu(menu, mouse)
+
+        dessineBoutons(menu, fen, mouse)
+
+        # updates the frames of the game
+        pg.display.update()
+
+
+def eventMenu(menu, mouse):
+    for ev in pg.event.get():
+
+        if ev.type == pg.QUIT:
+            sys.exit()
+
+        if ev.type == pg.MOUSEBUTTONDOWN:
+
+            if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
+                    menu.feny / 1.5 <= mouse[1] <= menu.feny / 1.5 + 40):
+                sys.exit()
+            if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
+                    menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
+                game.partie = True
+                menu.partie = False
+            if (menu.fenx / 2.2 + 150 <= mouse[0] <= menu.fenx / 2.2 + 290) and (
+                    menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
+                modesolo.partie = True
+                menu.partie = False
+
+
+def dessineBoutons(menu, fen, mouse):
         couleur = (255, 255, 255)
 
         couleur_sombre = (36, 63, 93)
@@ -212,37 +248,8 @@ def menu(fen):
         jouer = smallfont.render('MULTI 2J', True, couleur)
         solo = smallfont.render('SOLO', True, couleur)
 
-        fen.blit(fond, [0, 0])
-        for ev in pg.event.get():
-
-            if ev.type == pg.QUIT:
-                sys.exit()
-
-            if ev.type == pg.MOUSEBUTTONDOWN:
-
-                if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
-                        menu.feny / 1.5 <= mouse[1] <= menu.feny / 1.5 + 40):
-                    sys.exit()
-
-            if ev.type == pg.MOUSEBUTTONDOWN:
-                if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
-                        menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
-                    game.partie = True
-                    menu.partie = False
-
-            if ev.type == pg.MOUSEBUTTONDOWN:
-                if (menu.fenx / 2.2 + 150 <= mouse[0] <= menu.fenx / 2.2 + 290) and (
-                        menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
-                    modesolo.partie = True
-                    menu.partie = False
-
-        # coordonnes de la souris dans un tuple
-        mouse = pg.mouse.get_pos()
-
-        # quand la souris passe sur le bouton la couleur change
         if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
             pg.draw.rect(fen, couleur_sombre, [menu.fenx / 2.2, menu.feny / 3, 140, 40])
-
         else:
             pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2, menu.feny / 3, 140, 40])
         fen.blit(jouer, (menu.fenx / 2.2 + 18, menu.feny / 3 + 10))
@@ -250,7 +257,6 @@ def menu(fen):
         if (menu.fenx / 2.2 + 150 <= mouse[0] <= menu.fenx / 2.2 + 290) and (menu.feny / 3 <= mouse[1] <= menu.feny /
                                                                              3 + 40):
             pg.draw.rect(fen, couleur_sombre, [menu.fenx / 2.2 + 150, menu.feny / 3, 140, 40])
-
         else:
             pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2 + 150, menu.feny / 3, 140, 40])
         fen.blit(solo, (menu.fenx / 2.2 + 178, menu.feny / 3 + 10))
@@ -258,14 +264,78 @@ def menu(fen):
         if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (menu.feny / 1.5 <= mouse[1] <= menu.feny /
                                                                        1.5 + 40):
             pg.draw.rect(fen, couleur_sombre, [menu.fenx / 2.2, menu.feny / 1.5, 140, 40])
-
-
-
         else:
             pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2, menu.feny / 1.5, 140, 40])
-
-            # superimposing the text onto our button
         fen.blit(quit, (menu.fenx / 2.2 + 14, menu.feny / 1.5 + 10))
 
-        # updates the frames of the game
+
+def partieSolo(fen):
+    tankSolo = tank("tank1.png", 1, modesolo.fenx, modesolo.feny)
+    joueurSolo = [tankSolo]
+    joueurSolo[0].angle = 136
+
+    partie = True
+
+    while partie:
+        modesolo.clock.tick(modesolo.frq)
+        fen.blit(modesolo.fond, (0, 0))
+
+        modesolo.partie = getevents(joueurSolo, sys, modesolo.time)
+
+        # Ajout de bonus à intervalle aléatoire
+
+        if modesolo.time - modesolo.lasBonusTime >= modesolo.couldown and len(modesolo.bonus) <= 5 :
+            modesolo.bonus.append(Bonus(modesolo.fenx))
+            cd = uniform(7 * modesolo.frq, 14 * modesolo.frq)
+            tb = modesolo.time
+
+        for indice in range(1) :
+            t = joueurSolo[0]
+            tir = True
+
+            t.shield = modesolo.time - t.t_shield <= 5 * modesolo.frq
+
+            for b in t.balle:
+                if not b.tir:
+
+                    # On dit qu'au moins une balle n'est pas tirée
+
+                    tir = False
+
+                    # On met à jour la position de la balle et son angle de tir si elle n'est pas tirée
+
+                    maj_balle(t, b, modesolo.screen, indice)
+
+                # Dans le cas où la balle est tirée
+
+                else :
+                    # On met à jour sa position en fonction de la trajectoire de tir
+
+                    tir_balle(b, modesolo.time, fen)
+
+                # On vérifie si la balle touche l'adversaire s'il n'est pas invincible
+
+
+                # On vérifie si la balle touche un bonus
+
+                #touche_bonus(b, t, adv, modesolo)
+
+            if modesolo.time - t.freezeT > 3 * 60 or t.shield :
+                t.freeze = False
+
+            if not tir :
+                # On affiche la trajectoire de tir
+
+                dessineTrajectoire(t, t.balle[-1], fen)
+
+            deplace(t, fen, tir)
+
+            t.affiche_vie(fen)
+
+        # Affiche les bonus disponibles.
+        for bon in modesolo.bonus :
+            fen.blit(bon.image, [bon.x, bon.y])
+
+
         pg.display.update()
+        modesolo.time += 1
