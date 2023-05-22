@@ -69,7 +69,7 @@ while jeu:
                         menu.partie = False
 
                 if ev.type == pg.MOUSEBUTTONDOWN:
-                    if (longueur / 2.2  + 150<= mouse[0] <= longueur / 2.2 + 290) and (
+                    if (longueur / 2.2 + 150 <= mouse[0] <= longueur / 2.2 + 290) and (
                             hauteur / 3 <= mouse[1] <= hauteur / 3 + 40):
                         modesolo.partie = True
                         menu.partie = False
@@ -190,7 +190,7 @@ while jeu:
 
         # Ajout de bonus à intervalle aléatoire
 
-        if modesolo.time - modesolo.tb >= modesolo.cd and len(modesolo.bonus) <= 5:
+        if modesolo.time - modesolo.lasBonusTime >= modesolo.couldown and len(modesolo.bonus) <= 5:
             modesolo.bonus.append(Bonus(modesolo.fenx))
             cd = uniform(7 * modesolo.frq, 14 * modesolo.frq)
             tb = modesolo.time
