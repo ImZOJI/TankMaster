@@ -11,12 +11,12 @@ def maj_balle(tank, ball, screen, joueur):
     Fonction qui permet de mettre à jour la position et l'angle de tir de la balle lorsqu'elle n'est pas tirée.
     """
     ball.posx = tank.posx + ((60 * screen[0] / 1080) * ((joueur + 1) % 2))
-    ball.pos0 = ball.posx
+    ball.positionInitiale = ball.posx
     ball.posy = tank.posy + (20 * screen[1] / 675)
     ball.angle = tank.angle
 
 
-def traj(tank, ball, fen):
+def dessineTrajectoire(tank, ball, fen):
     """
     :param tank: Tank
     :param ball: balle
@@ -64,10 +64,10 @@ def touche_ennemi(ball, adversaire):
             adversaire.vie -= 1
 
 
-def touche_bonus(ball, tank, adversaire, g):
+def touche_bonus(ball, tank, adversaire, partie):
     i = 0
-    while i < len(g.bonus):
-        bon = g.bonus[i]
+    while i < len(partie.bonus):
+        bon = partie.bonus[i]
         if bon.hitbox[0] < ball.posx < bon.hitbox[2] and bon.hitbox[1] < ball.posy < \
                 bon.hitbox[3]:
 
@@ -76,24 +76,24 @@ def touche_bonus(ball, tank, adversaire, g):
             match bon.type:
                 case 0:
                     adversaire.freeze = True
-                    adversaire.freezeT = g.time
+                    adversaire.freezeT = partie.time
                 case 1:
                     tank.balle.append(balle(tank.propx, tank.propy))
                 case 2:
                     tank.vit += 3
                 case 3:
                     for bll in tank.balle:
-                        bll.mult += 0.25
+                        bll.multiplicateur += 0.25
                 case 4:
-                    tank.t_shield = g.time
+                    tank.t_shield = partie.time
 
             # On supprime le bonus touché
 
-            g.bonus = g.bonus[:i] + g.bonus[i + 1 :]
+            partie.bonus = partie.bonus[:i] + partie.bonus[i + 1 :]
         i += 1
 
 
-def move(tank, fen, tir):
+def deplace(tank, fen, tir):
     if not tank.freeze:
         if not tir:
             if tank.g:
@@ -136,23 +136,23 @@ def keydown(event, joueurs, sys, time,):
             joueurs[1].moins = True
         if event.key == pg.K_SPACE:
             if not joueurs[0].freeze:
-                for b in joueurs[0].balle:
-                    if not b.tir:
-                        b.t0 = time
-                        shotS = pg.mixer.Sound("shot.mp3")
-                        shotS.set_volume(0.3)
-                        shotS.play()
-                        b.tir = True
+                for ball in joueurs[0].balle:
+                    if not ball.tir:
+                        ball.tempsInitial = time
+                        shotSound = pg.mixer.Sound("shot.mp3")
+                        shotSound.set_volume(0.3)
+                        shotSound.play()
+                        ball.tir = True
                         break
         if event.key == pg.K_RETURN:
             if not joueurs[1].freeze:
-                for b in joueurs[1].balle:
-                    if not b.tir:
-                        b.t0 = time
-                        shotS = pg.mixer.Sound("shot.mp3")
-                        shotS.set_volume(0.3)
-                        shotS.play()
-                        b.tir = True
+                for ball in joueurs[1].balle:
+                    if not ball.tir:
+                        ball.tempsInitial = time
+                        shotSound = pg.mixer.Sound("shot.mp3")
+                        shotSound.set_volume(0.3)
+                        shotSound.play()
+                        ball.tir = True
                         break
     return partie
 
