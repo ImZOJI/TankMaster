@@ -252,7 +252,7 @@ def dessineBoutons(menu, fen, mouse):
         couleur_claire = (61, 72, 77)
         font = pg.font.Font('INVASION2000.TTF', 150)
         tankmaster = font.render('TANKMASTER', True, (255,255,255))
-        fen.blit(tankmaster, (menu.fenx / 2 - 510 , menu.feny / 7))
+        fen.blit(tankmaster, (menu.fenx / 2 - 510 , 100))
         smallfont = pg.font.SysFont('Cooper', 35)
         fond = pg.transform.scale(pg.image.load("fond_menu.png"), (menu.fenx, menu.feny)).convert()
         quit = smallfont.render('QUITTER', True, couleur)
@@ -265,12 +265,12 @@ def dessineBoutons(menu, fen, mouse):
             pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2, menu.feny / 3, 140, 40])
         fen.blit(jouer, (menu.fenx / 2.2 + 18, menu.feny / 3 + 10))
 
-        if (menu.fenx / 2.2 + 150 <= mouse[0] <= menu.fenx / 2.2 + 290) and (menu.feny / 3 <= mouse[1] <= menu.feny /
+        if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (menu.feny / 3 + 50 <= mouse[1] <= menu.feny /
                                                                              3 + 40):
-            pg.draw.rect(fen, couleur_sombre, [menu.fenx / 2.2 + 150, menu.feny / 3, 140, 40])
+            pg.draw.rect(fen, couleur_sombre, [menu.fenx / 2.2, menu.feny / 3 + 50, 140, 40])
         else:
-            pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2 + 150, menu.feny / 3, 140, 40])
-        fen.blit(solo, (menu.fenx / 2.2 + 178, menu.feny / 3 + 10))
+            pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2 , menu.feny / 3 + 50, 140, 40])
+        fen.blit(solo, (menu.fenx / 2.2 + 34, menu.feny / 3 + 60))
 
         if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (menu.feny / 1.5 <= mouse[1] <= menu.feny /
                                                                        1.5 + 40):
