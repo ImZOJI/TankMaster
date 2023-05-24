@@ -1,4 +1,4 @@
-import pygame as pg
+from cible import*
 
 class modesolo:
     def __init__(self, screen):
@@ -9,3 +9,4 @@ class modesolo:
         self.screen = [self.fenx, self.feny] = screen
         self.fond = pg.transform.scale(pg.image.load("background.jpeg"), (self.fenx, self.feny)).convert()
         self.score = 0
+        self.cble = cible(self.fenx)

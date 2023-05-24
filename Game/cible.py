@@ -2,8 +2,8 @@ import pygame as pg
 from random import*
 
 class cible:
-    def __init__(self, fen):
-        self.proportion = fen / 1080
+    def __init__(self, fenx):
+        self.proportion = fenx / 1080
 
         # choix au hasard des coordonées du bonus
         self.x = uniform(100 * self.proportion, 980 * self.proportion)

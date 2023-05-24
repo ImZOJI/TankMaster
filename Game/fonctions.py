@@ -63,24 +63,26 @@ def touche_ennemi(ball, adversaire):
     :return:
     Fonction quio permet de retirer de la vie si l'adversaire est touché.
     """
-    if adversaire.hitbox[0] < ball.posx < adversaire.hitbox[0] + adversaire.hitbox[2] and adversaire.hitbox[1] <\
-            ball.posy < adversaire.hitbox[1] + adversaire.hitbox[3]:
+    if adversaire.hitbox[0] < ball.posx + ball.size / 2 < adversaire.hitbox[0] + adversaire.hitbox[2] and \
+            adversaire.hitbox[1] < ball.posy + ball.size / 2 < adversaire.hitbox[1] + adversaire.hitbox[3]:
         ball.tir = False
         pg.mixer.Sound("exploion.mp3").play()
         if not adversaire.shield:
             adversaire.vie -= 1
 
-def touche_cible(ball, cible, modesolo) :
-    if cible.hitbox[0] < ball.posx < cible.hitbox[2] and cible.hitbox[1] < ball.posy < \
-            cible.hitbox[3]:
+def touche_cible(ball, modesolo) :
+    if modesolo.cble.hitbox[0] < ball.posx + ball.size / 2 < modesolo.cble.hitbox[2] and modesolo.cble.hitbox[1] <\
+            ball.posy + ball.size / 2 < modesolo.cble.hitbox[3]:
+        ball.tir = False
         modesolo.score += 1
-        cible1 = cible(modesolo.fenx)
-        return cible1
+        modesolo.cble = cible(modesolo.fenx)
+
+
 def touche_bonus(ball, tank, adversaire, partie):
     i = 0
     while i < len(partie.bonus):
         bon = partie.bonus[i]
-        if bon.hitbox[0] < ball.posx < bon.hitbox[2] and bon.hitbox[1] < ball.posy < \
+        if bon.hitbox[0] < ball.posx + ball.size / 2 < bon.hitbox[2] and bon.hitbox[1] < ball.posy + ball.size / 2 < \
                 bon.hitbox[3]:
 
             # On applique le bonus en fonction de son type
@@ -281,10 +283,8 @@ def partieSolo(fen):
     modesolo = solo.modesolo(screen)
     tankSolo = char.tank("tank1.png", 1, modesolo.fenx, modesolo.feny)
     joueurSolo = [tankSolo]
-    cible1 = cible(fenx)
-    partie = True
 
-    while partie:
+    while modesolo.time < 60 * modesolo.frq:
         modesolo.clock.tick(modesolo.frq)
         fen.blit(modesolo.fond, (0, 0))
 
@@ -312,17 +312,9 @@ def partieSolo(fen):
 
                 tir_balle(b, modesolo.time, fen)
 
-            # On vérifie si la balle touche l'adversaire s'il n'est pas invincible
+                touche_cible(b, modesolo)
 
-
-            # On vérifie si la balle touche un bonus
-
-            #touche_bonus(b, t, adv, modesolo)
-
-        if modesolo.time - t.freezeT > 3 * 60 or t.shield :
-            t.freeze = False
-
-        if not tir :
+        if not tir:
             # On affiche la trajectoire de tir
 
             dessineTrajectoire(t, t.balle[-1], fen)
@@ -331,13 +323,7 @@ def partieSolo(fen):
 
         affiche_tank(t, fen)
 
-        t.affiche_vie(fen)
-
-        # Affiche les bonus disponibles.
-        for bon in modesolo.bonus :
-            fen.blit(bon.image, [bon.x, bon.y])
-
-        fen.blit(cible1.image, (750,750))
+        fen.blit(modesolo.cble.image, (modesolo.cble.x, modesolo.cble.y))
 
         pg.display.update()
         modesolo.time += 1
@@ -433,7 +419,7 @@ def partieMulti(fen):
 
                 touche_bonus(ball, tank, adv, game)
 
-            if game.time - tank.freezeT > 3 * 60 or tank.shield :
+            if game.time - tank.freezeT > 3 * 60 or tank.shield:
                 tank.freeze = False
 
             if not tir :
@@ -447,7 +433,7 @@ def partieMulti(fen):
 
             tank.affiche_vie(fen)
 
-            if joueurs[0].vie == 0 or joueurs[1].vie == 0 :
+            if joueurs[0].vie == 0 or joueurs[1].vie == 0:
                 game.partie = False
 
         # Affiche les bonus disponibles.
