@@ -2,7 +2,7 @@ import tank as char
 from bonus import*
 import game as multi
 import modesolo as solo
-import menu as men # obligé de l'importé comme ça il y avait un problème quand je l'importais comme les autres
+import menu as men # obligé de l'importer comme ça il y avait un problème quand je l'importais comme les autres
 from fin import*
 from cible import*
 import sys
@@ -326,6 +326,16 @@ def partieSolo(fen):
         affiche_tank(t, fen)
 
         fen.blit(modesolo.cble.image, (modesolo.cble.x, modesolo.cble.y))
+
+        font = pg.font.SysFont("arial", 48)
+        minutes = modesolo.time // 3600
+        secondes = modesolo.time // 60
+        temps = font.render(str(minutes // 10)+str(minutes % 10)+" : "+str(secondes // 10)+str(secondes % 10),
+                            True, "white", )
+        fen.blit(temps, (fenx - 300, 50))
+        score = font.render(str(modesolo.score // 10)+str(modesolo.score % 10), True, "white")
+        fen.blit(score, (10, 50))
+
 
         pg.display.update()
         modesolo.time += 1
