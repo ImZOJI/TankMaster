@@ -4,6 +4,7 @@ import game as multi
 import modesolo as solo
 import menu as men # obligé de l'importé comme ça il y avait un problème quand je l'importais comme les autres
 from fin import*
+from cible import*
 import sys
 
 
@@ -69,7 +70,12 @@ def touche_ennemi(ball, adversaire):
         if not adversaire.shield:
             adversaire.vie -= 1
 
-
+def touche_cible(ball, cible, modesolo) :
+    if cible.hitbox[0] < ball.posx < cible.hitbox[2] and cible.hitbox[1] < ball.posy < \
+            cible.hitbox[3]:
+        modesolo.score += 1
+        cible1 = cible(modesolo.fenx)
+        return cible1
 def touche_bonus(ball, tank, adversaire, partie):
     i = 0
     while i < len(partie.bonus):
@@ -275,7 +281,7 @@ def partieSolo(fen):
     modesolo = solo.modesolo(screen)
     tankSolo = char.tank("tank1.png", 1, modesolo.fenx, modesolo.feny)
     joueurSolo = [tankSolo]
-
+    cible1 = cible(fenx)
     partie = True
 
     while partie:
@@ -331,6 +337,7 @@ def partieSolo(fen):
         for bon in modesolo.bonus :
             fen.blit(bon.image, [bon.x, bon.y])
 
+        fen.blit(cible1.image, (750,750))
 
         pg.display.update()
         modesolo.time += 1
