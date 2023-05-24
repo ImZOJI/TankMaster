@@ -1,0 +1,18 @@
+Comment jouer:
+1. Télechargez python et pygame ($ pip install pygame)
+2. Lancez main.py ($ python main.py)
+3. Amusez vous
+
+Controles:
+- 2 Joueurs:
+    Joueur1 (à gauche):
+        Se déplacer: q / d
+        Monter / descendre le canon: z / s
+    Joueur2 (à droite):
+        Se déplacer: flèche gauche / flèche droite
+        Monter / descendre le canon: flèche haut / flèche bas
+
+- 1 Joueur
+    Joueur1 (à gauche):
+        Se déplacer: q / d ou flèche gauche / flèche droite
+        Monter / descendre le canon: z / s ou flèche haut / flèche bas
