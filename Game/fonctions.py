@@ -220,6 +220,10 @@ def mainMenu(fen):
         mouse = pg.mouse.get_pos()
         eventMenu(menu, mouse, fen)
 
+        font = pg.font.Font('INVASION2000.TTF', 150)
+        tankmaster = font.render('TANKMASTER', True, (255,255,255))
+        fen.blit(tankmaster, (menu.fenx / 2 - 510 , 100))
+
         dessineBoutons(menu, fen, mouse)
 
         # updates the frames of the game
@@ -240,8 +244,8 @@ def eventMenu(menu, mouse, fen):
             if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
                     menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
                 partieMulti(fen)
-            if (menu.fenx / 2.2 + 150 <= mouse[0] <= menu.fenx / 2.2 + 290) and (
-                    menu.feny / 3 <= mouse[1] <= menu.feny / 3 + 40):
+            if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
+                    menu.feny / 3 + 50<= mouse[1] <= menu.feny / 3 + 90):
                 partieSolo(fen)
 
 
@@ -250,9 +254,6 @@ def dessineBoutons(menu, fen, mouse):
 
         couleur_sombre = (36, 63, 93)
         couleur_claire = (61, 72, 77)
-        font = pg.font.Font('INVASION2000.TTF', 150)
-        tankmaster = font.render('TANKMASTER', True, (255,255,255))
-        fen.blit(tankmaster, (menu.fenx / 2 - 510 , 100))
         smallfont = pg.font.SysFont('Cooper', 35)
         fond = pg.transform.scale(pg.image.load("fond_menu.png"), (menu.fenx, menu.feny)).convert()
         quit = smallfont.render('QUITTER', True, couleur)
@@ -265,8 +266,8 @@ def dessineBoutons(menu, fen, mouse):
             pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2, menu.feny / 3, 140, 40])
         fen.blit(jouer, (menu.fenx / 2.2 + 18, menu.feny / 3 + 10))
 
-        if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (menu.feny / 3 + 50 <= mouse[1] <= menu.feny /
-                                                                             3 + 40):
+        if (menu.fenx / 2.2 <= mouse[0] <= menu.fenx / 2.2 + 140) and (
+                    menu.feny / 3 + 50<= mouse[1] <= menu.feny / 3 + 90):
             pg.draw.rect(fen, couleur_sombre, [menu.fenx / 2.2, menu.feny / 3 + 50, 140, 40])
         else:
             pg.draw.rect(fen, couleur_claire, [menu.fenx / 2.2 , menu.feny / 3 + 50, 140, 40])
@@ -284,9 +285,9 @@ def partieSolo(fen):
     screen = [fenx, feny] = fen.get_size()
     modesolo = solo.modesolo(screen)
     tankSolo = char.tank("tank1.png", 1, modesolo.fenx, modesolo.feny)
-    joueurSolo = [tankSolo]
+    joueurSolo = [tankSolo, tankSolo]
 
-    while modesolo.time < 60 * modesolo.frq:
+    while modesolo.time < 0 * modesolo.frq:
         modesolo.clock.tick(modesolo.frq)
         fen.blit(modesolo.fond, (0, 0))
 
@@ -340,7 +341,7 @@ def partieSolo(fen):
         pg.display.update()
         modesolo.time += 1
 
-    menuFin(fen)
+    finSolo(fen, modesolo.score)
 
 def menuFin(fen):
     screen = [fenx, feny] = fen.get_size()
@@ -360,6 +361,44 @@ def menuFin(fen):
         else:
             pg.draw.rect(fen, couleur_claire, [fenx / 2.2, feny / 1.2, 140, 40])
         fen.blit(jouer, (fenx / 2.2 + 5, feny / 1.2 + 10))
+        pg.display.update()
+        for ev in pg.event.get():
+
+            if ev.type == pg.QUIT:
+                sys.exit()
+
+            if ev.type == pg.KEYDOWN:
+                if ev.key == pg.K_ESCAPE:
+                    sys.exit()
+
+            if ev.type == pg.MOUSEBUTTONDOWN:
+                if (fenx / 2.2 <= mouse[0] <= fenx / 2.2 + 140) and (feny / 1.2 <= mouse[1] <= feny / 1.2 + 40):
+                    mainMenu(fen)
+
+
+def finSolo(fen, score):
+    screen = [fenx, feny] = fen.get_size()
+    fini = True
+    couleur = (255, 255, 255)
+    fond = pg.transform.scale(pg.image.load("gameover.jpg"), (fenx, feny)).convert()
+    couleur_sombre = (36, 63, 93)
+    couleur_claire = (61, 72, 77)
+    smallfont = pg.font.SysFont('Cooper', 35)
+    jouer = smallfont.render('CONTINUE', True, couleur)
+
+    while fini:
+        fen.blit(fond, (0,0))
+        mouse = pg.mouse.get_pos()
+        if (fenx / 2.2 <= mouse[0] <= fenx / 2.2 + 140) and (feny / 1.2 <= mouse[1] <= feny / 1.2 + 40):
+            pg.draw.rect(fen, couleur_sombre, [fenx / 2.2, feny / 1.2, 140, 40])
+        else:
+            pg.draw.rect(fen, couleur_claire, [fenx / 2.2, feny / 1.2, 140, 40])
+        fen.blit(jouer, (fenx / 2.2 + 5, feny / 1.2 + 10))
+
+        font = pg.font.Font("INVASION2000.TTF", 128)
+        scoreTxt = font.render("SCORE : " + str(score // 10) + str(score % 10), True, "white")
+        fen.blit(scoreTxt, (250 * (fenx / 1080), 100 * (feny / 675)))
+
         pg.display.update()
         for ev in pg.event.get():
 
