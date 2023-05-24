@@ -250,7 +250,9 @@ def dessineBoutons(menu, fen, mouse):
 
         couleur_sombre = (36, 63, 93)
         couleur_claire = (61, 72, 77)
-
+        font = pg.font.SysFont('Invasion 2000', 150)
+        tankmaster = font.render('TANKMASTER', True, (255,255,255))
+        fen.blit(tankmaster, (menu.fenx / 2 - 510 , menu.feny / 7))
         smallfont = pg.font.SysFont('Cooper', 35)
         fond = pg.transform.scale(pg.image.load("fond_menu.png"), (menu.fenx, menu.feny)).convert()
         quit = smallfont.render('QUITTER', True, couleur)
