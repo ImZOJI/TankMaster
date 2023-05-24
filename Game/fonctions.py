@@ -287,7 +287,7 @@ def partieSolo(fen):
     tankSolo = char.tank("tank1.png", 1, modesolo.fenx, modesolo.feny)
     joueurSolo = [tankSolo, tankSolo]
 
-    while modesolo.time < 0 * modesolo.frq:
+    while modesolo.time < 60 * modesolo.frq:
         modesolo.clock.tick(modesolo.frq)
         fen.blit(modesolo.fond, (0, 0))
 
@@ -329,8 +329,9 @@ def partieSolo(fen):
         fen.blit(modesolo.cble.image, (modesolo.cble.x, modesolo.cble.y))
 
         font = pg.font.SysFont("arial", 48)
-        minutes = modesolo.time // 3600
-        secondes = modesolo.time // 60
+        tempsRestant = 3600 - modesolo.time
+        minutes = tempsRestant // 3600
+        secondes = tempsRestant // 60
         temps = font.render(str(minutes // 10)+str(minutes % 10)+" : "+str(secondes // 10)+str(secondes % 10),
                             True, "white", )
         fen.blit(temps, (fenx - 300, 50))
