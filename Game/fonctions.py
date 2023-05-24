@@ -1,7 +1,7 @@
 import tank as char
 from bonus import*
 import game as multi
-from modesolo import*
+import modesolo as solo
 import menu as men # obligé de l'importé comme ça il y avait un problème quand je l'importais comme les autres
 from fin import*
 import sys
@@ -271,9 +271,10 @@ def dessineBoutons(menu, fen, mouse):
 
 
 def partieSolo(fen):
+    screen = [fenx, feny] = fen.get_size()
+    modesolo = solo.modesolo(screen)
     tankSolo = char.tank("tank1.png", 1, modesolo.fenx, modesolo.feny)
     joueurSolo = [tankSolo]
-    joueurSolo[0].angle = 136
 
     partie = True
 
@@ -283,57 +284,48 @@ def partieSolo(fen):
 
         modesolo.partie = getevents(joueurSolo, sys, modesolo.time)
 
-        # Ajout de bonus à intervalle aléatoire
-
-        if modesolo.time - modesolo.lasBonusTime >= modesolo.couldown and len(modesolo.bonus) <= 5 :
-            modesolo.bonus.append(Bonus(modesolo.fenx))
-            cd = uniform(7 * modesolo.frq, 14 * modesolo.frq)
-            tb = modesolo.time
-
-        for indice in range(1) :
-            t = joueurSolo[0]
-            tir = True
-
-            t.shield = modesolo.time - t.t_shield <= 5 * modesolo.frq
-
-            for b in t.balle:
-                if not b.tir:
-
-                    # On dit qu'au moins une balle n'est pas tirée
-
-                    tir = False
-
-                    # On met à jour la position de la balle et son angle de tir si elle n'est pas tirée
-
-                    maj_balle(t, b, modesolo.screen, indice)
-
-                # Dans le cas où la balle est tirée
-
-                else :
-                    # On met à jour sa position en fonction de la trajectoire de tir
-
-                    tir_balle(b, modesolo.time, fen)
-
-                # On vérifie si la balle touche l'adversaire s'il n'est pas invincible
+        t = joueurSolo[0]
+        tir = True
 
 
-                # On vérifie si la balle touche un bonus
+        for b in t.balle:
+            if not b.tir:
 
-                #touche_bonus(b, t, adv, modesolo)
+                # On dit qu'au moins une balle n'est pas tirée
 
-            if modesolo.time - t.freezeT > 3 * 60 or t.shield :
-                t.freeze = False
+                tir = False
 
-            if not tir :
-                # On affiche la trajectoire de tir
+                # On met à jour la position de la balle et son angle de tir si elle n'est pas tirée
 
-                dessineTrajectoire(t, t.balle[-1], fen)
+                maj_balle(t, b, modesolo.screen, 0)
 
-            deplace(t, tir)
+            # Dans le cas où la balle est tirée
 
-            affiche_tank(t, fen)
+            else :
+                # On met à jour sa position en fonction de la trajectoire de tir
 
-            t.affiche_vie(fen)
+                tir_balle(b, modesolo.time, fen)
+
+            # On vérifie si la balle touche l'adversaire s'il n'est pas invincible
+
+
+            # On vérifie si la balle touche un bonus
+
+            #touche_bonus(b, t, adv, modesolo)
+
+        if modesolo.time - t.freezeT > 3 * 60 or t.shield :
+            t.freeze = False
+
+        if not tir :
+            # On affiche la trajectoire de tir
+
+            dessineTrajectoire(t, t.balle[-1], fen)
+
+        deplace(t, tir)
+
+        affiche_tank(t, fen)
+
+        t.affiche_vie(fen)
 
         # Affiche les bonus disponibles.
         for bon in modesolo.bonus :
@@ -388,7 +380,6 @@ def partieMulti(fen):
     joueurs[1].angle = 136
 
     while game.partie :
-
         game.clock.tick(game.frq)
         fen.blit(game.fond, (0, 0))
 
@@ -449,14 +440,14 @@ def partieMulti(fen):
 
             tank.affiche_vie(fen)
 
-            # Affiche les bonus disponibles.
-            for bon in game.bonus :
-                fen.blit(bon.image, [bon.x, bon.y])
-
             if joueurs[0].vie == 0 or joueurs[1].vie == 0 :
                 game.partie = False
 
-            pg.display.update()
-            game.time += 1
+        # Affiche les bonus disponibles.
+        for bon in game.bonus :
+            fen.blit(bon.image, [bon.x, bon.y])
+
+        pg.display.update()
+        game.time += 1
     menuFin(fen)
 
