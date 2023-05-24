@@ -99,7 +99,7 @@ def touche_bonus(ball, tank, adversaire, partie):
         i += 1
 
 
-def deplace(tank, fen, tir):
+def deplace(tank, tir):
     if not tank.freeze:
         if not tir:
             if tank.g:
@@ -107,6 +107,9 @@ def deplace(tank, fen, tir):
             if tank.d:
                 tank.droite()
             tank.hitbox = (tank.posx, tank.posy, tank.size, tank.size)
+
+def affiche_tank(tank,fen):
+    if not tank.freeze:
         if not tank.shield:
             fen.blit(tank.image, [tank.posx, tank.posy])
         else :
@@ -326,7 +329,9 @@ def partieSolo(fen):
 
                 dessineTrajectoire(t, t.balle[-1], fen)
 
-            deplace(t, fen, tir)
+            deplace(t, tir)
+
+            affiche_tank(t, fen)
 
             t.affiche_vie(fen)
 
@@ -438,7 +443,9 @@ def partieMulti(fen):
 
                 dessineTrajectoire(tank, tank.balle[-1], fen)
 
-            deplace(tank, fen, tir)
+            deplace(tank, tir)
+
+            affiche_tank(tank, fen)
 
             tank.affiche_vie(fen)
 
